@@ -12,7 +12,7 @@ class PrefixedTokensTest extends FlatSpec with Matchers {
 
     for (period <- periods) {
       for (creationDateOffset <- creationOffsetDays) {
-        val payload = TokenPayload(creationDateOffset, period, "SevenDay")
+        val payload = TokenPayload(creationDateOffset, period, SevenDay)
         val token: String = encoder.encode(payload)
         val decodedPayload = encoder.decode(token).asInstanceOf[Valid].payload
 

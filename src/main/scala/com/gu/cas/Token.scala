@@ -9,6 +9,17 @@ import org.joda.time.{DateTime, Weeks, Days}
 import javax.crypto.Mac
 import org.joda.time.format.ISODateTimeFormat
 
+case class TokenPayload(creationDateOffset: Days, period: Weeks, subscriptionCode: SubscriptionCode) {
+  lazy val creationDate = TokenPayload.epoch.plus(creationDateOffset)
+}
+
+object SubscriptionCode {
+  val all = List(SevenDay, Guardian)
+}
+sealed trait SubscriptionCode
+case object SevenDay extends SubscriptionCode
+case object Guardian extends SubscriptionCode
+
 sealed abstract class PayloadResult
 case class Valid(payload: TokenPayload) extends PayloadResult
 case class Invalid(payload: Option[TokenPayload]) extends PayloadResult
@@ -30,7 +41,7 @@ case class RawTokenEncoder(secretKey: String) {
   val keySpec = new SecretKeySpec(secretKey.getBytes(), "HmacSHA1")
 
   def encode(tokenPayload: TokenPayload) : String = {
-    val subscriptionCodeNumber = TokenPayload.subscriptionCodes.indexOf(tokenPayload.subscriptionCode)
+    val subscriptionCodeNumber = SubscriptionCode.all.indexOf(tokenPayload.subscriptionCode)
 
     val bw = new BitWriter()
     bw.add(tokenPayload.creationDateOffset.getDays, 11) // 11 bits gives 2048 days - over 5 years
@@ -61,7 +72,7 @@ case class RawTokenEncoder(secretKey: String) {
 
     val creationDateOffset = Days.days(br.read(11))
     val period = Weeks.weeks(br.read(6))
-    val subscriptionCode = TokenPayload.subscriptionCodes(br.read(3))
+    val subscriptionCode = SubscriptionCode.all(br.read(3))
 
     val payload = TokenPayload(creationDateOffset, period, subscriptionCode)
     if (mac == expectedMac) {
@@ -79,15 +90,10 @@ case class RawTokenEncoder(secretKey: String) {
   }
 }
 
-case class TokenPayload(creationDateOffset: Days, period: Weeks, subscriptionCode: String) {
-  lazy val creationDate = TokenPayload.epoch.plus(creationDateOffset)
-}
-
 object TokenPayload {
   val epoch = ISODateTimeFormat.dateTimeNoMillis.parseDateTime("2012-09-20T00:00:00Z")
-  val subscriptionCodes = List("SevenDay", "Guardian")
 
-  def apply(period: Weeks, subscriptionCode: String):TokenPayload = {
+  def apply(period: Weeks, subscriptionCode: SubscriptionCode):TokenPayload = {
     val creationDateOffset = Days.daysBetween(epoch, new DateTime())
     TokenPayload(creationDateOffset, period, subscriptionCode)
   }

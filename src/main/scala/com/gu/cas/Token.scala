@@ -9,6 +9,15 @@ import org.joda.time.{DateTime, Weeks, Days}
 import javax.crypto.Mac
 import org.joda.time.format.ISODateTimeFormat
 
+object TokenPayload {
+  val epoch = ISODateTimeFormat.dateTimeNoMillis.parseDateTime("2012-09-20T00:00:00Z")
+
+  def apply(period: Weeks, subscriptionCode: SubscriptionCode):TokenPayload = {
+    val creationDateOffset = Days.daysBetween(epoch, new DateTime())
+    TokenPayload(creationDateOffset, period, subscriptionCode)
+  }
+}
+
 case class TokenPayload(creationDateOffset: Days, period: Weeks, subscriptionCode: SubscriptionCode) {
   lazy val creationDate = TokenPayload.epoch.plus(creationDateOffset)
 }
@@ -87,14 +96,5 @@ case class RawTokenEncoder(secretKey: String) {
     m.init(keySpec)
     m.update(payloadBytes)
     m.doFinal()(0) // only use the first 1 bytes of the mac - 256 variations is enough for us
-  }
-}
-
-object TokenPayload {
-  val epoch = ISODateTimeFormat.dateTimeNoMillis.parseDateTime("2012-09-20T00:00:00Z")
-
-  def apply(period: Weeks, subscriptionCode: SubscriptionCode):TokenPayload = {
-    val creationDateOffset = Days.daysBetween(epoch, new DateTime())
-    TokenPayload(creationDateOffset, period, subscriptionCode)
   }
 }

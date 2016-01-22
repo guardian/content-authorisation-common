@@ -33,6 +33,22 @@ libraryDependencies ++= Seq(
   "org.scalatest" % "scalatest_2.11" % "2.2.6" % "test"
 )
 
+pomExtra := (
+  <url>https://github.com/guardian/content-authorisation-common</url>
+    <developers>
+      <developer>
+        <id>rtyley</id>
+        <name>Roberto Tyley</name>
+        <url>https://github.com/rtyley</url>
+      </developer>
+      <developer>
+        <id>ostapneko</id>
+        <name>Thomas Franquelin</name>
+        <url>https://github.com/ostapneko</url>
+      </developer>
+    </developers>
+  )
+
 lazy val root = project in file(".")
 
 ReleaseKeys.releaseProcess := Seq[ReleaseStep](

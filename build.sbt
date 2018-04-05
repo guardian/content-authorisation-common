@@ -13,6 +13,8 @@ scalaVersion := "2.12.4"
 
 crossScalaVersions := Seq("2.11.6", scalaVersion.value)
 
+ReleaseKeys.crossBuild := true
+
 unmanagedResourceDirectories in Compile += baseDirectory.value / "conf"
 
 scmInfo := Some(ScmInfo(

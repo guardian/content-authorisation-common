@@ -9,9 +9,9 @@ name := "content-authorisation-common"
 
 organization := "com.gu"
 
-scalaVersion := "2.11.6"
+scalaVersion := "2.12.4"
 
-crossScalaVersions := Seq(scalaVersion.value)
+crossScalaVersions := Seq("2.11.6", scalaVersion.value)
 
 unmanagedResourceDirectories in Compile += baseDirectory.value / "conf"
 
@@ -30,7 +30,7 @@ libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.4",
   "joda-time" % "joda-time" % "2.9.1",
   "com.typesafe" % "config" % "1.3.0",
-  "org.scalatest" % "scalatest_2.11" % "2.2.6" % "test"
+  "org.scalatest" % "scalatest_2.12" % "3.0.5" % "test"
 )
 
 pomExtra := (

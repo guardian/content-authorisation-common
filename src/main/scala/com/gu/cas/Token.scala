@@ -14,22 +14,23 @@ import org.joda.time.format.ISODateTimeFormat
 object TokenPayload {
   val epoch = ISODateTimeFormat.dateTimeNoMillis.parseDateTime("2012-09-20T00:00:00Z")
 
-  def apply(period: Weeks, subscriptionCode: SubscriptionCode):TokenPayload = {
-    val creationDateOffset = Days.daysBetween(epoch, new DateTime())
+  val windowWrapSize = 2048
+
+  def apply(today: LocalDate)(period: Weeks, subscriptionCode: SubscriptionCode):TokenPayload = {
+    val creationDateOffset = Days.days(Days.daysBetween(epoch.toLocalDate, today).getDays % windowWrapSize)
     TokenPayload(creationDateOffset, period, subscriptionCode)
   }
 }
 
 case class TokenPayload(creationDateOffset: Days, period: Weeks, subscriptionCode: SubscriptionCode) {
 
-  val windowWrapSize = 2048
+  import TokenPayload.windowWrapSize
 
-  def expiryDate(now: LocalDate): LocalDate = {
-    val daysSinceOriginalEpoch = Days.daysBetween(TokenPayload.epoch.toLocalDate, now).getDays
+  def expiryDate(today: LocalDate): LocalDate = {
+    val daysSinceOriginalEpoch = Days.daysBetween(TokenPayload.epoch.toLocalDate, today).getDays
     val codeStartIndexInWindow = creationDateOffset.getDays
-    // todayIndex may be much greater than 2048, endIndex maybe a little greater, but startIndex will always be 0-2047 inclusive
-    val maxNumberOfTimesWeWrappedPastTheStartIndex = (daysSinceOriginalEpoch - codeStartIndexInWindow) / windowWrapSize
-    val daysOfWrapAroundsNeeded = windowWrapSize * maxNumberOfTimesWeWrappedPastTheStartIndex
+    val completeErasSinceFirstPossibleStart = (daysSinceOriginalEpoch - codeStartIndexInWindow) / windowWrapSize
+    val daysOfWrapAroundsNeeded = windowWrapSize * completeErasSinceFirstPossibleStart
     val mostOptimisticExpiryDaysSinceEpoch = Days.days(codeStartIndexInWindow + period.toStandardDays.getDays + daysOfWrapAroundsNeeded)
 
     TokenPayload.epoch.toLocalDate.plus(mostOptimisticExpiryDaysSinceEpoch).plusDays(1)

@@ -34,4 +34,14 @@ class TokenPayloadTest extends FlatSpec with Matchers {
 
   }
 
+  "create token payload" should "be created if it's still in the first era" in {
+    val payload = TokenPayload(epoch.plusDays(100))(Weeks.THREE, SevenDay)
+    payload.creationDateOffset should be(Days.days(100))
+  }
+
+  "create token payload" should "be created if it's into the second era" in {
+    val payload = TokenPayload(wrappedEpoch.plusDays(100))(Weeks.THREE, SevenDay)
+    payload.creationDateOffset should be(Days.days(100))
+  }
+
 }

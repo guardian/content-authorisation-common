@@ -11,7 +11,7 @@ organization := "com.gu"
 
 scalaVersion := "2.12.4"
 
-crossScalaVersions := Seq("2.11.6", scalaVersion.value)
+crossScalaVersions := Seq("2.11.12", scalaVersion.value)
 
 ReleaseKeys.crossBuild := true
 

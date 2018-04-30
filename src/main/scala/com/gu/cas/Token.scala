@@ -1,11 +1,13 @@
 package com.gu.cas
 
 import javax.crypto.spec.SecretKeySpec
-import com.gu.cas.util.{BitReader, ByteArrayToAlphaStringEncoder, BitWriter}
+import com.gu.cas.util.{BitReader, BitWriter, ByteArrayToAlphaStringEncoder}
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+
 import org.apache.commons.io.IOUtils
+
 import scala._
-import org.joda.time.{DateTime, Weeks, Days}
+import org.joda.time.{DateTime, Days, LocalDate, Weeks}
 import javax.crypto.Mac
 import org.joda.time.format.ISODateTimeFormat
 
@@ -19,7 +21,20 @@ object TokenPayload {
 }
 
 case class TokenPayload(creationDateOffset: Days, period: Weeks, subscriptionCode: SubscriptionCode) {
-  lazy val creationDate = TokenPayload.epoch.plus(creationDateOffset)
+
+  val windowWrapSize = 2048
+
+  def expiryDate(now: LocalDate): LocalDate = {
+    val daysSinceOriginalEpoch = Days.daysBetween(TokenPayload.epoch.toLocalDate, now).getDays
+    val codeStartIndexInWindow = creationDateOffset.getDays
+    // todayIndex may be much greater than 2048, endIndex maybe a little greater, but startIndex will always be 0-2047 inclusive
+    val maxNumberOfTimesWeWrappedPastTheStartIndex = (daysSinceOriginalEpoch - codeStartIndexInWindow) / windowWrapSize
+    val daysOfWrapAroundsNeeded = windowWrapSize * maxNumberOfTimesWeWrappedPastTheStartIndex
+    val mostOptimisticExpiryDaysSinceEpoch = Days.days(codeStartIndexInWindow + period.toStandardDays.getDays + daysOfWrapAroundsNeeded)
+
+    TokenPayload.epoch.toLocalDate.plus(mostOptimisticExpiryDaysSinceEpoch).plusDays(1)
+  }
+
 }
 
 object SubscriptionCode {

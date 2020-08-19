@@ -1,59 +1,28 @@
 import sbtrelease._
 import ReleaseStateTransformations._
 
-releaseSettings
-
-sonatypeSettings
-
 name := "content-authorisation-common"
-
+description := "Extracts some behaviours from content-authorisation"
 organization := "com.gu"
-
 scalaVersion := "2.12.4"
 
-crossScalaVersions := Seq("2.11.12", scalaVersion.value)
-
-ReleaseKeys.crossBuild := true
-
+crossScalaVersions := Seq("2.11.8", scalaVersion.value, "2.13.3")
 unmanagedResourceDirectories in Compile += baseDirectory.value / "conf"
-
-scmInfo := Some(ScmInfo(
-  url("https://github.com/guardian/content-authorisation-common"),
-  "scm:git:git@github.com:guardian/content-authorisation-common.git"
-))
-
-description := "Extracts some behaviours from content-authorisation"
-
-licenses := Seq("Apache V2" -> url("http://www.apache.org/licenses/LICENSE-2.0.html"))
-
 resolvers += "Guardian Github Releases" at "http://guardian.github.io/maven/repo-releases"
 
 libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.4",
   "joda-time" % "joda-time" % "2.9.1",
   "com.typesafe" % "config" % "1.3.0",
-  "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+  "org.scalatest" %% "scalatest" % "3.1.1" % "test"
 )
-
-pomExtra := (
-  <url>https://github.com/guardian/content-authorisation-common</url>
-    <developers>
-      <developer>
-        <id>rtyley</id>
-        <name>Roberto Tyley</name>
-        <url>https://github.com/rtyley</url>
-      </developer>
-      <developer>
-        <id>ostapneko</id>
-        <name>Thomas Franquelin</name>
-        <url>https://github.com/ostapneko</url>
-      </developer>
-    </developers>
-  )
 
 lazy val root = project in file(".")
 
-ReleaseKeys.releaseProcess := Seq[ReleaseStep](
+sources in doc in Compile := List()
+releasePublishArtifactsAction := PgpKeys.publishSigned.value
+releaseCrossBuild := true
+releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
   runClean,
@@ -61,12 +30,9 @@ ReleaseKeys.releaseProcess := Seq[ReleaseStep](
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  ReleaseStep(
-    action = state => Project.extract(state).runTask(PgpKeys.publishSigned, state)._1,
-    enableCrossBuild = true
-  ),
+  releaseStepCommandAndRemaining("+publishSigned"),
+  releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
   commitNextVersion,
-  ReleaseStep(state => Project.extract(state).runTask(SonatypeKeys.sonatypeReleaseAll, state)._1),
   pushChanges
 )

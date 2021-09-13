@@ -4,16 +4,16 @@ import ReleaseStateTransformations._
 name := "content-authorisation-common"
 description := "Extracts some behaviours from content-authorisation"
 organization := "com.gu"
-scalaVersion := "2.12.4"
+scalaVersion := "2.12.14"
 
-crossScalaVersions := Seq("2.11.8", scalaVersion.value, "2.13.3")
+crossScalaVersions := Seq(scalaVersion.value, "2.13.6")
 unmanagedResourceDirectories in Compile += baseDirectory.value / "conf"
-resolvers += "Guardian Github Releases" at "http://guardian.github.io/maven/repo-releases"
+resolvers += "Guardian Github Releases" at "https://guardian.github.io/maven/repo-releases"
 
 libraryDependencies ++= Seq(
-  "commons-io" % "commons-io" % "2.4",
-  "joda-time" % "joda-time" % "2.9.1",
-  "com.typesafe" % "config" % "1.3.0",
+  "commons-io" % "commons-io" % "2.11.0",
+  "joda-time" % "joda-time" % "2.10.10",
+  "com.typesafe" % "config" % "1.4.1",
   "org.scalatest" %% "scalatest" % "3.1.1" % "test"
 )
 

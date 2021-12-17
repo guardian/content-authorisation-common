@@ -11,16 +11,15 @@ jobs:
     if: github.actor == 'scala-steward'
     runs-on: ubuntu-latest
 
-  steps:
+    steps:
   
-  - name: Checkout repo
-    uses: actions/checkout@v2
+    - name: Checkout repo
+      uses: actions/checkout@v2
   
-  - name: Set up Java
-    uses: actions/setup-java@v2
-    with:
-      java-version: 11
+    - name: Set up Java
+      uses: actions/setup-java@v2
+      with:
+        java-version: 11
       
-  - name: Run tests
-    run: sbt test
-        
+    - name: Run tests
+      run: sbt test

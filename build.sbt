@@ -14,7 +14,7 @@ libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.11.0",
   "joda-time" % "joda-time" % "2.10.10",
   "com.typesafe" % "config" % "1.4.1",
-  "org.scalatest" %% "scalatest" % "3.1.1" % "test"
+  "org.scalatest" %% "scalatest" % "3.1.4" % "test"
 )
 
 lazy val root = project in file(".")

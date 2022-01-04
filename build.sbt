@@ -6,7 +6,7 @@ description := "Extracts some behaviours from content-authorisation"
 organization := "com.gu"
 scalaVersion := "2.12.15"
 
-crossScalaVersions := Seq(scalaVersion.value, "2.13.6")
+crossScalaVersions := Seq(scalaVersion.value, "2.13.7")
 unmanagedResourceDirectories in Compile += baseDirectory.value / "conf"
 resolvers += "Guardian Github Releases" at "https://guardian.github.io/maven/repo-releases"
 

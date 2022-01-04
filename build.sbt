@@ -4,7 +4,7 @@ import ReleaseStateTransformations._
 name := "content-authorisation-common"
 description := "Extracts some behaviours from content-authorisation"
 organization := "com.gu"
-scalaVersion := "2.12.14"
+scalaVersion := "2.12.15"
 
 crossScalaVersions := Seq(scalaVersion.value, "2.13.6")
 unmanagedResourceDirectories in Compile += baseDirectory.value / "conf"

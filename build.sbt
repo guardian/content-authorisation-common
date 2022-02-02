@@ -13,8 +13,8 @@ resolvers += "Guardian Github Releases" at "https://guardian.github.io/maven/rep
 libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.11.0",
   "joda-time" % "joda-time" % "2.10.13",
-  "com.typesafe" % "config" % "1.4.1",
-  "org.scalatest" %% "scalatest" % "3.2.11" % "test"
+  "com.typesafe" % "config" % "1.4.2",
+  "org.scalatest" %% "scalatest" % "3.1.4" % "test"
 )
 
 lazy val root = project in file(".")
